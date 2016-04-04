@@ -88,7 +88,6 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 
       :host(:focus) .tab-content {
         opacity: 1;
-        font-weight: 700;
       }
 
       paper-ripple {
@@ -140,6 +139,10 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
         tap: '_onTap'
       },
 
+      observers: [
+        '_focusedChanged(receivedFocusFromKeyboard)'
+      ],
+
       attached: function() {
         this._updateNoink();
       },
@@ -169,7 +172,17 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
 
           anchor.click();
         }
-      }
+      },
+
+      _focusedChanged: function(receivedFocusFromKeyboard) {
+        if (receivedFocusFromKeyboard) {
+          this.ensureRipple();
+        }
+        if (this.hasRipple()) {
+          this._ripple.uiDownAction();
+          this._ripple.holdDown = receivedFocusFromKeyboard;
+        }
+      },
 
     });
   </script>
