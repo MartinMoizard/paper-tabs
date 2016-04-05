@@ -175,15 +175,31 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
       },
 
       _focusedChanged: function(receivedFocusFromKeyboard) {
-        if (receivedFocusFromKeyboard) {
-          this.ensureRipple();
+        var ripple = this.getRipple();
+
+        if (this.focused && receivedFocusFromKeyboard) {
+          if (!ripple) {
+            this.ensureRipple();
+            ripple = this.getRipple();
+          }
+          ripple.downAction();
         }
-        if (this.hasRipple()) {
-          this._ripple.uiDownAction();
-          this._ripple.holdDown = receivedFocusFromKeyboard;
+
+        if (ripple) {
+          ripple.holdDown = receivedFocusFromKeyboard;
         }
       },
 
+      _asyncClick: function() {
+        Polymer.IronButtonStateImpl._asyncClick.apply(this, arguments);
+        var ripple = this.getRipple();
+        if (ripple) {
+          var lastHoldDown = ripple.holdDown;
+          ripple.holdDown = false;
+          ripple.downAction();
+          ripple.holdDown = lastHoldDown;
+        }
+      },
     });
   </script>
 </dom-module>
